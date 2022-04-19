@@ -189,3 +189,5 @@ fprintf(['\n\nTransmission successful, total number of Redundancy ' ...
 
 
 end
+
+writecell(transmission_data,'collected_data.xls')
