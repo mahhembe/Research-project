@@ -67,7 +67,7 @@ num_of_retransmission=0;
 
 
 
-for i=1:0.1:2
+for i=1:2000
     
     
 initial_transmission=1;
@@ -92,12 +92,13 @@ redundancyVersions = 0:3;
 decState = [];
 
 % Noise power can be varied to see the different RV
-SNR = i; % dB
+SNR = rand*(50+10)-10; % dB
 
 % Initial value
 blkCRCerr = 1;
+timeout=false;
 
-while blkCRCerr >= 1
+while blkCRCerr >= 1 & ~timeout
     ack='ACK';
     acknowledgement=1;
     
@@ -110,6 +111,7 @@ while blkCRCerr >= 1
         %break;
     end
 
+    
     pdsch.RV = redundancyVersions(rvIndex);
     % PDSCH payload
     codedTrBlock = lteDLSCH(enb, pdsch, codedTrBlkSize, ...
@@ -133,6 +135,12 @@ while blkCRCerr >= 1
             acknowledgement=0;
     end
     
+      %mark the last transmission to terminate at timeout
+    if length(redundancyVersions)==rvIndex & acknowledgement==0
+        timeout=true;
+        ack='TIMEOUT';
+    end
+         
     
     %storing data to variables
     transmitted_bits=mat2str(dlschTransportBlk');
@@ -168,7 +176,8 @@ while blkCRCerr >= 1
     retransmision=1;
     num_of_retransmission=num_of_retransmission+1;
     row=row+1;
-
+    
+      
 end
 
 
