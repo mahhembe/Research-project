@@ -65,9 +65,9 @@ num_of_retransmission=0;
 
 
 
+for j=[32,64,128,256]
 
-
-for i=1:2000
+for i=1:1500
     
     
 initial_transmission=1;
@@ -77,8 +77,8 @@ column=1;
 
 
 
-rvIndex = 0;                                  % Redundancy Version index
-transportBlkSize = 12960;                     % Transport block size
+rvIndex = 0;                               % Redundancy Version index
+transportBlkSize = j;                     % Transport block size
 [~,pdschIndicesInfo] = ltePDSCHIndices(enb,pdsch,pdsch.PRBSet);
 codedTrBlkSize = pdschIndicesInfo.G;          % Available PDSCH bits
 dlschTransportBlk = randi([0 1], transportBlkSize, 1); % DL-SCH data bits
@@ -92,7 +92,7 @@ redundancyVersions = 0:3;
 decState = [];
 
 % Noise power can be varied to see the different RV
-SNR = rand*(50+10)-10; % dB
+SNR = rand*(25+25)-25; % dB
 
 % Initial value
 blkCRCerr = 1;
@@ -139,13 +139,16 @@ while blkCRCerr >= 1 & ~timeout
     if length(redundancyVersions)==rvIndex & acknowledgement==0
         timeout=true;
         ack='TIMEOUT';
+        fprintf('transmission timeout, next packet...........')
     end
          
     
     %storing data to variables
     transmitted_bits=mat2str(dlschTransportBlk');
     coded_data=mat2str(codedTrBlock');
+    pdschSymbols=round(pdschSymbols,4);
     modulated_data=mat2str(pdschSymbols');
+    pdschSymbolsNoisy=round(pdschSymbolsNoisy,4);
     channel_data=mat2str(pdschSymbolsNoisy');
     demodulated_data=mat2str(rxCW{1}');
     decoded_data=mat2str(rxBits{1}');
@@ -184,10 +187,13 @@ end
 initial_transmission=1;
 num_of_transmission=num_of_transmission+1;
 
+if ~timeout
+
 fprintf(['\n\nTransmission successful, total number of Redundancy ' ...
     'Versions used is ' num2str(redundancyVersions(rvIndex) + 1) ' \n\n']);
+end
 
-
+end
 end
 
 writecell(transmission_data,'collected_data.xls')
