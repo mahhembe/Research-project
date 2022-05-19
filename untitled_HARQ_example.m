@@ -1,4 +1,4 @@
-enb.NDLRB = 50;                % No of Downlink RBs in total BW
+%enb.NDLRB = 50;                % No of Downlink RBs in total BW
 enb.CyclicPrefix = 'Normal';   % CP length
 enb.PHICHDuration = 'Normal';  % PHICH duration
 enb.NCellID = 10;              % Cell ID
@@ -12,14 +12,13 @@ enb.NSubframe = 0;             % Subframe number 0
 
 
 
-
 pdsch.NLayers = 1;                % No of layers to map the transport block
 pdsch.TxScheme = 'Port0';         % Transmission scheme
 pdsch.Modulation = {'16QAM'};     % Modulation
 pdsch.RV = 0;                     % Initialize Redundancy Version
 pdsch.RNTI = 500;                 % Radio Network Temporary Identifier
 pdsch.NTurboDecIts = 5;           % Number of turbo decoder iterations
-pdsch.PRBSet = (0:enb.NDLRB-1).'; % Define the PRBSet
+%pdsch.PRBSet = (0:enb.NDLRB-1).'; % Define the PRBSet
 pdsch.CSI = 'On';                 % CSI scaling of soft bits
 
 
@@ -52,8 +51,10 @@ transmission_data{1,10}='channel_data';
 transmission_data{1,11}='demodulated_data';
 transmission_data{1,12}='decoded_data';
 transmission_data{1,13}='block_crc';
-transmission_data{1,14}='Acknoledgement';
-transmission_data{1,15}='ACK/NACK';
+transmission_data{1,14}='num_of_resource_blocks';
+transmission_data{1,15}='transmission_bandwidth';
+transmission_data{1,16}='Acknoledgement';
+transmission_data{1,17}='ACK/NACK';
 
 
 
@@ -63,11 +64,19 @@ num_of_transmission=1;
 retransmision=0;
 num_of_retransmission=0;   
 
+no_rb=[6,15,25,50,75,100];
+bandwidth_mhz=[1.4,3,5,10,15,20];
+
+for ii=1:6
+
+
+enb.NDLRB = no_rb(ii);         % No of Downlink RBs in total BW
+pdsch.PRBSet = (0:enb.NDLRB-1).'; % Define the PRBSet
 
 
 for j=[32,64,128,256]
 
-for i=1:1500
+for i=1:500
     
     
 initial_transmission=1;
@@ -169,8 +178,10 @@ while blkCRCerr >= 1 & ~timeout
     transmission_data{row,11}=demodulated_data;
     transmission_data{row,12}=decoded_data;
     transmission_data{row,13}=blkCRCerr;
-    transmission_data{row,14}=acknowledgement;
-    transmission_data{row,15}=ack;
+    transmission_data{row,14}=no_rb(ii);
+    transmission_data{row,15}=bandwidth_mhz(ii);
+    transmission_data{row,16}=acknowledgement;
+    transmission_data{row,17}=ack;
     
     
     
@@ -195,5 +206,6 @@ end
 
 end
 end
+end
 
-writecell(transmission_data,'collected_data.xls')
+%writecell(transmission_data,'collected_data.xls')
