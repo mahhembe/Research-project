@@ -27,8 +27,7 @@ plot(x,z);
 hold on
 plot(x,w)
 ylabel('error rate (%)')
-xlabel('SNR')
-title("Percentage error rate based on various SNR")
+title("Percentage error rate on varios SNR")
 legend({'HARQ','Machine learning E-HARQ','Multistage Machine E-HARQ'},'Location','northeast')
 
 
@@ -64,20 +63,6 @@ title("Latency based on various channel noise(SNR)")
 legend({'HARQ','Machine learning E-HARQ','Multistage Machine E-HARQ'},'Location','northeast')
 
 
-x=5:20;
-y=HARQ_packet_latency(x);
-z=machine_learning_HARQ_packet(x);
-w=mml_HARQ_packet_latency(x);
-figure
-plot(x,y,'r');
-hold on
-plot(x,z,'b-');
-hold on
-plot(x,w,'k*');
-ylabel('latency (s)')
-xlabel('packet size 2^x ')
-title("Latency based on different packet size")
-legend({'HARQ','Machine learning E-HARQ','Multistage Machine E-HARQ'},'Location','northeast')
 
 
 end
